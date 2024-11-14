@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/libros")
+@CrossOrigin(origins = "http://localhost:3000") // Permite solicitudes CORS desde tu frontend
 public class LibroController {
 
     @Autowired

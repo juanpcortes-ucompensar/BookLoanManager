@@ -1,6 +1,6 @@
 // src/pages/RegisterBook.js
 import React, { useState } from 'react';
-import api from '../services/api';
+import api from '../services/api'; // Asegúrate de que 'api' esté configurado para usar Axios
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
 const RegisterBook = () => {
@@ -20,7 +20,7 @@ const RegisterBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/books', book); // Asegúrate de que la URL sea correcta
+      await api.post('/api/libros', book); // Cambia esta línea a la URL correcta
       setMessage({ type: 'success', text: 'Libro registrado con éxito' });
       setBook({
         title: '',

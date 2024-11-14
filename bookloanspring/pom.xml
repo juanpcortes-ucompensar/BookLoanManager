@@ -56,6 +56,22 @@
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
     </dependency>
+    <dependency>
+		<groupId>org.springdoc</groupId>
+		<artifactId>springdoc-openapi-ui</artifactId>
+		<version>1.6.14</version> <!-- Asegúrate de usar la última versión -->
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+		<version>4.0.1</version> <!-- Asegúrate de elegir la versión adecuada -->
+		<scope>provided</scope>
+	</dependency>
+	<dependency>
+	<groupId>org.apache.httpcomponents.client5</groupId>
+	<artifactId>httpclient5</artifactId>
+	<scope>test</scope>
+	</dependency>
 </dependencies>
 
 	<build>

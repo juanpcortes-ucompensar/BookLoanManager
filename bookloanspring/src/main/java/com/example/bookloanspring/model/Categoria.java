@@ -1,6 +1,7 @@
 package com.example.bookloanspring.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -8,23 +9,16 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCategoria; // Cambié a Long para mayor compatibilidad con JPA
+    private Long idCategoria; 
 
     private String nombre;
 
     @OneToMany(mappedBy = "categoria")
+    @JsonIgnore // Ignorar la lista de libros al serializar
     private List<Libro> libros;
 
-    // Constructor por defecto
-    public Categoria() {}
-
-    // Constructor con parámetros
-    public Categoria(String nombre) {
-        this.nombre = nombre;
-    }
-
     // Getters y Setters
-    public Long getIdCategoria() {  // Asegúrate de que el tipo sea Long
+    public Long getIdCategoria() {
         return idCategoria;
     }
 

@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "http://localhost:3000") // Permite solicitudes CORS desde tu frontend
 public class UsuarioController {
 
     @Autowired

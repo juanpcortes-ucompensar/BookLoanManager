@@ -1,6 +1,7 @@
 package com.example.bookloanspring.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -8,41 +9,31 @@ public class Libro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idLibro;  // Cambiar a Long, ya que es el tipo recomendado para ID's autogenerados
+    private Long idLibro;
 
     private String titulo;
     private String autor;
-    private String ISBN;
-    private String estado; // disponible, prestado, reservado
+    private String isbn;
+    private String estado; // Disponible, prestado, reservado
 
     @ManyToOne
     @JoinColumn(name = "idCategoria")
     private Categoria categoria;
 
     @OneToMany(mappedBy = "libro")
+    @JsonIgnore // Ignorar la lista de prestamos al serializar
     private List<Prestamo> prestamos;
 
     @OneToMany(mappedBy = "libro")
+    @JsonIgnore // Ignorar la lista de reservas al serializar
     private List<Reserva> reservas;
 
-    // Constructor por defecto
-    public Libro() {}
-
-    // Constructor con parámetros
-    public Libro(String titulo, String autor, String ISBN, String estado, Categoria categoria) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.ISBN = ISBN;
-        this.estado = estado;
-        this.categoria = categoria;
-    }
-
     // Getters y Setters
-    public Long getIdLibro() {  // Cambiar a Long
+    public Long getIdLibro() {
         return idLibro;
     }
 
-    public void setIdLibro(Long idLibro) {  // Cambiar a Long
+    public void setIdLibro(Long idLibro) {
         this.idLibro = idLibro;
     }
 
@@ -62,12 +53,12 @@ public class Libro {
         this.autor = autor;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getIsbn() {
+        return isbn;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public String getEstado() {
@@ -104,7 +95,7 @@ public class Libro {
 
     // Métodos específicos
     public boolean disponibilidad() {
-        return "disponible".equals(this.estado);
+        return "Disponible".equals(this.estado);
     }
 
     public void agregarLibro() {

@@ -38,4 +38,11 @@ public class LibroController {
         Libro nuevoLibro = libroService.createLibro(libro);
         return ResponseEntity.status(201).body(nuevoLibro);
     }
+
+    // Nuevo método para obtener libros por categoría
+    @GetMapping("/categoria/{idCategoria}")
+    public ResponseEntity<List<Libro>> getLibrosByCategoria(@PathVariable Long idCategoria) {
+        List<Libro> libros = libroService.getLibrosByCategoria(idCategoria); // Filtra libros por categoría
+        return libros.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(libros);
+    }
 }

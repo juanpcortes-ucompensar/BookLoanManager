@@ -29,4 +29,9 @@ public class LibroService {
     public Libro createLibro(Libro libro) {
         return libroRepository.save(libro);
     }
+
+    // Método para obtener libros por categoría
+    public List<Libro> getLibrosByCategoria(Long idCategoria) {
+        return libroRepository.findByCategoriaIdCategoria(idCategoria); // Usamos una consulta personalizada
+    }
 }

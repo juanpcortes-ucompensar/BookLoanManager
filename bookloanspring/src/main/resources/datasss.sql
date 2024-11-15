@@ -5,10 +5,10 @@ INSERT INTO CATEGORIA (ID_CATEGORIA, NOMBRE) VALUES (3, 'Ciencia');
 INSERT INTO CATEGORIA (ID_CATEGORIA, NOMBRE) VALUES (4, 'Historia');
 
 -- Insert data into Libro table
-INSERT INTO LIBRO (ID_LIBRO, ISBN, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (1, '9780451524935', 'George Orwell', 'Disponible', '1984', 1);
-INSERT INTO LIBRO (ID_LIBRO, ISBN, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (2, '9780062316097', 'Yuval Noah Harari', 'Disponible', 'Sapiens', 2);
-INSERT INTO LIBRO (ID_LIBRO, ISBN, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (3, '9780553380163', 'Stephen Hawking', 'Prestado', 'Breve historia del tiempo', 3);
-INSERT INTO LIBRO (ID_LIBRO, ISBN, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (4, '9781509827695', 'Charles Darwin', 'Disponible', 'El origen de las especies', 3);
+INSERT INTO LIBRO (ID_LIBRO, isbn, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (1, '9780451524935', 'George Orwell', 'Disponible', '1984', 1);
+INSERT INTO LIBRO (ID_LIBRO, isbn, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (2, '9780062316097', 'Yuval Noah Harari', 'Disponible', 'Sapiens', 2);
+INSERT INTO LIBRO (ID_LIBRO, isbn, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (3, '9780553380163', 'Stephen Hawking', 'Prestado', 'Breve historia del tiempo', 3);
+INSERT INTO LIBRO (ID_LIBRO, isbn, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES (4, '9781509827695', 'Charles Darwin', 'Disponible', 'El origen de las especies', 3);
 
 -- Insert data into Usuario table
 INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO) VALUES (1, 'Calle Falsa 123', 'Juan Perez', '555-1234');

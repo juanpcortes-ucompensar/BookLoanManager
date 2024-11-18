@@ -222,10 +222,10 @@ try {
             <tr>
               <th>Título</th>
               <th>Autor</th>
-              <th>Usuario Prestante</th>
               <th>Categoría</th>
               <th>Estado</th>
-              <th>Fecha Préstamo</th>
+              <th>Usuario Estado</th>
+              <th>Fecha Estado</th>
             </tr>
           </thead>
           <tbody>
@@ -233,9 +233,9 @@ try {
               <tr key={index}>
                 <td>{libro.titulo}</td>
                 <td>{libro.autor}</td>
-                <td>{libro.nombreUsuario}</td>
                 <td>{libro.categoria}</td>
                 <td>{libro.estado}</td>
+                <td>{libro.nombreUsuario}</td>
                 <td>{libro.fechaPrestamo}</td>
               </tr>
             ))}

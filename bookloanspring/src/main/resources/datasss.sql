@@ -16,9 +16,9 @@ INSERT INTO LIBRO (ID_LIBRO, isbn, AUTOR, ESTADO, TITULO, ID_CATEGORIA) VALUES
 (8, '9780143127741', 'Bill Bryson', 'Prestado', 'Una breve historia de casi todo', 3); -- Ciencia
 
 -- Insert data into Usuario table
-INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA) VALUES (1, 'Calle Falsa 123', 'Juan Perez', '555-1234', 'a@prueba.com', '1234');
-INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA) VALUES (2, 'Avenida Siempre Viva 742', 'Maria Gomez', '555-5678', 'b@prueba.com', '1234');
-INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA) VALUES (3, 'Boulevard de los Sueños Rotos 456', 'Carlos Sanchez', '555-8765', 'c@prueba.com', '1234');
+INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA, ROL) VALUES (1, 'Calle Falsa 123', 'Juan Perez', '555-1234', 'admin@biblioprest.com', '1234', 'ADMIN');
+INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA, ROL) VALUES (2, 'Avenida Siempre Viva 742', 'Maria Gomez', '555-5678', 'librero1@biblioprest.com', '1234', 'BIBLIOTECARIO');
+INSERT INTO USUARIO (ID_USUARIO, DIRECCION, NOMBRE, TELEFONO, EMAIL, CONTRASENA, ROL) VALUES (3, 'Boulevard de los Sueños Rotos 456', 'Carlos Sanchez', '555-8765', 'librero2@biblioprest.com', '1234', 'BIBLIOTECARIO');
 
 -- Insert data into RESERVA table
 INSERT INTO RESERVA (ID_RESERVA, ESTADO, FECHA_RESERVA, ID_LIBRO, ID_USUARIO) VALUES (1, 'Activa', '2023-10-01', 1, 1);

@@ -17,6 +17,9 @@ public class Usuario {
     private String email;
     private String contrasena;
 
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
+
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<Prestamo> prestamos;
@@ -24,6 +27,11 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<Reserva> reservas;
+
+    public enum Rol {
+        ADMIN,
+        BIBLIOTECARIO
+    }
 
     // Constructor por defecto
     public Usuario() {}
@@ -100,5 +108,12 @@ public class Usuario {
         this.reservas = reservas;
     }
 
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
 
 }

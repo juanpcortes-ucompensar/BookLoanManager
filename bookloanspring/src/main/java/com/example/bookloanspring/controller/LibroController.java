@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/libros")
-@CrossOrigin(origins = "http://localhost:3000") // Permite solicitudes CORS desde tu frontend
+@CrossOrigin(origins = "http://localhost:3000")
 public class LibroController {
 
     @Autowired
@@ -62,10 +62,10 @@ public class LibroController {
         return ResponseEntity.status(201).body(nuevoLibro);
     }
 
-    // Nuevo método para obtener libros por categoría
+    // Método para obtener libros por categoría
     @GetMapping("/categoria")
     public ResponseEntity<List<Libro>> getLibrosByCategoria(@RequestParam(required = false) Long idCategoria) {
-        List<Libro> libros = libroService.getLibrosByCategoria(idCategoria); // Filtra libros por categoría
+        List<Libro> libros = libroService.getLibrosByCategoria(idCategoria);
         return libros.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(libros);
     }
 }

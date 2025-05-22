@@ -107,20 +107,4 @@ public class Libro {
         Prestado,
         Reservado
     }
-
-    public void agregarLibro() {
-        // Lógica para agregar un libro
-    }
-
-    public void eliminarLibro() {
-        // Lógica para eliminar un libro
-    }
-
-    public void actualizarLibro() {
-        // Lógica para actualizar un libro
-    }
-
-    public void consultarLibro() {
-        // Lógica para consultar un libro
-    }
 }

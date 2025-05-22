@@ -32,7 +32,7 @@ public class LibroService {
 
         Libro.EstadoLibro estado = null;
         if (estadoStr != null && !estadoStr.isEmpty() && !estadoStr.equalsIgnoreCase("Todos")) {
-            estado = Libro.EstadoLibro.valueOf(estadoStr); // cuidado con casing
+            estado = Libro.EstadoLibro.valueOf(estadoStr);
         }
 
         List<Object[]> results = libroRepository.searchLibros(titulo, usuarioPrestante, autor,
@@ -78,11 +78,11 @@ public class LibroService {
     public List<Libro> getLibrosByCategoria(Long idCategoria) {
         List<Libro> libros = null;
         if (idCategoria == null) {
-            libros = libroRepository.findAll(); // Retorna una lista vacía si no se proporciona un ID de categoría
+            libros = libroRepository.findAll(); 
         } else {
-            libros = libroRepository.findByCategoriaIdCategoria(idCategoria); // Retorna una lista vacía si no se proporciona un ID de categoría
+            libros = libroRepository.findByCategoriaIdCategoria(idCategoria); 
         }
-        return libros; // Usamos una consulta personalizada
+        return libros; 
     }
 
 }

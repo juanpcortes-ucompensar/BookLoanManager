@@ -11,7 +11,7 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idReserva;
     private Date fechaReserva;
-    private String estado; // activo, cancelado
+    private String estado;
 
     @ManyToOne
     @JoinColumn(name = "idLibro")
@@ -71,23 +71,5 @@ public class Reserva {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    // Métodos específicos
-    public void realizarReserva() {
-        // Lógica para realizar una reserva
-    }
-
-    public void cancelarReserva() {
-        // Lógica para cancelar una reserva
-    }
-
-    public void consultarReserva() {
-        // Lógica para consultar la reserva
-    }
-
-    public List<Reserva> listarReservasActivas() {
-        // Lógica para listar las reservas activas
-        return null; // Debes agregar el código para obtener las reservas activas
     }
 }

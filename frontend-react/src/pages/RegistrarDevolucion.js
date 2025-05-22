@@ -58,20 +58,28 @@ const RegistrarDevolucion = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Libro</TableCell>
-              <TableCell>Usuario</TableCell>
-              <TableCell>Fecha Préstamo</TableCell>
-              <TableCell>Fecha Devolución</TableCell>
-              <TableCell>Días Restantes</TableCell>
-              <TableCell>Acción</TableCell>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableCell><strong>Libro</strong></TableCell>
+              <TableCell><strong>Usuario</strong></TableCell>
+              <TableCell><strong>Fecha Préstamo</strong></TableCell>
+              <TableCell><strong>Fecha Devolución</strong></TableCell>
+              <TableCell><strong>Días Restantes</strong></TableCell>
+              <TableCell><strong>Acción</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {prestamos.map((p) => {
+            {prestamos.map((p, idx) => {
               const dias = calcularDiasRestantes(p.fechaDevolucion);
               return (
-                <TableRow key={p.idPrestamo}>
+                <TableRow
+                  key={p.idPrestamo}
+                  sx={{
+                    backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9f9f9',
+                    '&:hover': {
+                      backgroundColor: '#e3f2fd',
+                    },
+                  }}
+                >
                   <TableCell>{p.libro?.titulo}</TableCell>
                   <TableCell>{p.usuario?.nombre}</TableCell>
                   <TableCell>{p.fechaPrestamo?.substring(0, 10)}</TableCell>
@@ -81,7 +89,8 @@ const RegistrarDevolucion = () => {
                   </TableCell>
                   <TableCell>
                     <Button
-                      variant="contained"
+                      variant="outlined"
+                      size="small"
                       color="secondary"
                       onClick={() => registrarDevolucion(p.idPrestamo)}
                     >
@@ -91,9 +100,15 @@ const RegistrarDevolucion = () => {
                 </TableRow>
               );
             })}
+            {prestamos.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} align="center">No hay préstamos activos</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+
       <Snackbar
     open={snackbar.open}
     autoHideDuration={3000}

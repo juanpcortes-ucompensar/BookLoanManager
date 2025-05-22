@@ -16,10 +16,7 @@ public class DataLoaderService {
 
     @PostConstruct
     public void loadData() throws Exception {
-        // Lee el archivo SQL desde recursos o alguna ruta
         String sql = new String(Files.readAllBytes(Paths.get("src/main/resources/datasss.sql")));
-
-        // Ejecuta el script SQL
         jdbcTemplate.execute(sql);
     }
 }

@@ -5,9 +5,11 @@ import CheckAvailability from './pages/CheckAvailability';
 import LoanManagement from './pages/LoanManagement';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import RegistrarDevolucion from './pages/RegistrarDevolucion'; // ajusta el path si es necesario
+import RegistrarDevolucion from './pages/RegistrarDevolucion'; 
 import ProtectedLayout from './components/ProtectedLayout';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
+import UserManagement from './pages/UserManagement';
+import AdminRoute from './components/AdminRoute'; 
 
 const App = () => {
   return (
@@ -24,6 +26,9 @@ const App = () => {
           <Route path="/check-availability" element={<CheckAvailability />} />
           <Route path="/loan-management" element={<LoanManagement />} />
           <Route path="/devoluciones" element={<RegistrarDevolucion />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/usuarios" element={<UserManagement />} />
+          </Route>
         </Route>
       </Route>
 

@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import {
-  Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox,
-  Link, Paper, Box, Grid, Typography
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Paper,
+  Box,
+  Grid,
+  Typography,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import miImagen from './../assets/login.jpg';
 
 const theme = createTheme();
 
@@ -42,9 +48,13 @@ export default function Login() {
         contrasena: form.contrasena,
       });
 
-      if (response.data === true) {
+      const data = response.data;
+
+      if (data && data.email) {
         localStorage.setItem('token', 'fake-token');
-        localStorage.setItem('user', form.email);
+        localStorage.setItem('userEmail', data.email);
+        localStorage.setItem('userName', data.nombre);
+        localStorage.setItem('rol', data.rol);
         navigate('/dashboard');
       } else {
         setError('Correo o contraseña inválidos');
@@ -65,26 +75,28 @@ export default function Login() {
           xs={12}
           md={6}
           sx={{
-            display: { xs: 'none', md: 'block' }, // Oculta en móviles
-            minWidth: '50vw', // Forzamos el ancho mínimo
-            backgroundImage: `url(${miImagen})`,
+            display: { xs: 'none', md: 'block' },
+            minWidth: '50vw',
+            backgroundImage: `url(${require('./../assets/login.jpg')})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundColor: (theme) =>
-              theme.palette.mode === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+              theme.palette.mode === 'light'
+                ? theme.palette.grey[50]
+                : theme.palette.grey[900],
           }}
         />
 
-        {/* 📋 Formulario a la derecha */}
         <Grid
           item
           xs={12}
           sm={8}
-          md={5}
+          md={6}
           component={Paper}
           elevation={6}
           square
+          sx={{ minWidth: '50vw' }}
         >
           <Box
             sx={{
@@ -99,15 +111,20 @@ export default function Login() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Iniciar Sesión
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit}
+              sx={{ mt: 1, width: '100%' }}
+            >
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Correo Usuario"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -119,42 +136,36 @@ export default function Login() {
                 required
                 fullWidth
                 name="contrasena"
-                label="Password"
+                label="Contraseña"
                 type="password"
                 id="password"
                 autoComplete="current-password"
                 value={form.contrasena}
                 onChange={handleChange}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              {error && (
-                <Typography color="error" variant="body2">
-                  {error}
-                </Typography>
-              )}
+
+              <Typography
+                color="error"
+                variant="body2"
+                sx={{
+                  minHeight: '1.5em',
+                  visibility: error ? 'visible' : 'hidden',
+                  mb: 1,
+                  width: '100%',
+                  boxSizing: 'border-box',
+                }}
+              >
+                {error || ' '}
+              </Typography>
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Ingresar
               </Button>
-              <Grid container spacing={2} mt={2}>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
 
               <Box mt={5}>
                 <Copyright />

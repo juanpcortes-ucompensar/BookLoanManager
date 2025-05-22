@@ -25,25 +25,25 @@ public class CategoriaService {
     }
 
     // Consultar una categoría por su ID
-    public Optional<Categoria> consultarCategoria(Long idCategoria) {  // Cambiado de int a Long
-        return categoriaRepository.findById(idCategoria); // Devuelve Optional
+    public Optional<Categoria> consultarCategoria(Long idCategoria) {
+        return categoriaRepository.findById(idCategoria);
     }
 
     // Actualizar una categoría
-    public Optional<Categoria> actualizarCategoria(Long idCategoria, Categoria categoria) {  // Cambiado de int a Long
+    public Optional<Categoria> actualizarCategoria(Long idCategoria, Categoria categoria) {
         Optional<Categoria> categoriaExistente = categoriaRepository.findById(idCategoria);
         
         if (categoriaExistente.isPresent()) {
             Categoria cat = categoriaExistente.get();
-            cat.setNombre(categoria.getNombre()); // Asumiendo que quieres actualizar el nombre
-            return Optional.of(categoriaRepository.save(cat)); // Guardar la categoría actualizada
+            cat.setNombre(categoria.getNombre()); 
+            return Optional.of(categoriaRepository.save(cat));
         }
         
         return Optional.empty(); // Si no se encuentra la categoría, devolver Optional.empty()
     }
 
     // Eliminar una categoría
-    public boolean eliminarCategoria(Long idCategoria) {  // Cambiado de int a Long
+    public boolean eliminarCategoria(Long idCategoria) {
         Optional<Categoria> categoriaExistente = categoriaRepository.findById(idCategoria);
         
         if (categoriaExistente.isPresent()) {
@@ -51,6 +51,6 @@ public class CategoriaService {
             return true;
         }
         
-        return false; // Si no se encuentra la categoría, devolver false
+        return false;
     }
 }

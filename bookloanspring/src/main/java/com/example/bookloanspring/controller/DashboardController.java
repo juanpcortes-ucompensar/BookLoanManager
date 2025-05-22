@@ -43,7 +43,6 @@ public class DashboardController {
         long prestamosActivos = prestamoRepository.countByEstado(EstadoPrestamo.Activo);
         long reservasPendientes = reservaRepository.countByEstado("Activa");
 
-        // Puedes ajustar esto según cómo almacenes fechas en la base
         long librosVencidosHoy = prestamoRepository.countVencidosAntesDeHoy(EstadoPrestamo.Activo);
 
         resumen.add(Map.of("label", "📚 Libros disponibles", "value", librosDisponibles));

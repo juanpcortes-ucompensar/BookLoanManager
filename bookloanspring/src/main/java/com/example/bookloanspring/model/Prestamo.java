@@ -19,7 +19,7 @@ public class Prestamo {
     private Date fechaDevolucion;
 
     @Enumerated(EnumType.STRING)
-    private EstadoPrestamo estado; // Cambiado a enum
+    private EstadoPrestamo estado;
 
     @ManyToOne
     @JoinColumn(name = "idLibro")

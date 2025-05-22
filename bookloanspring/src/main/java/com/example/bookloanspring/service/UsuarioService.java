@@ -38,6 +38,7 @@ public class UsuarioService {
             usuarioExistente.setNombre(usuario.getNombre());
             usuarioExistente.setDireccion(usuario.getDireccion());
             usuarioExistente.setTelefono(usuario.getTelefono());
+            usuarioExistente.setRol(usuario.getRol());
             return Optional.of(usuarioRepository.save(usuarioExistente));
         }
         return Optional.empty();

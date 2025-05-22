@@ -5,11 +5,12 @@ import {
   TableContainer, TableHead, TableRow, Snackbar, Alert, Dialog,
   DialogTitle, DialogContent, DialogActions,
 } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import dayjs from 'dayjs';
 
 const LoanManagement = () => {
-  // Estados de filtros
+  
   const [titulo, setTitulo] = useState('');
   const [usuarioPrestante, setUsuarioPrestante] = useState('');
   const [autor, setAutor] = useState('');
@@ -20,11 +21,11 @@ const LoanManagement = () => {
   const [idLibro, setIdLibro] = useState('');
   const [open, setOpen] = useState(false);
 
-  // Datos de libros y categorías
+  
   const [libros, setLibros] = useState([]);
   const [categorias, setCategorias] = useState([]);
 
-  // Carga y feedback
+  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -32,8 +33,16 @@ const LoanManagement = () => {
   const [formData, setFormData] = useState({ idLibro: '', idUsuario: '' });
   const [librosDisponibles, setLibrosDisponibles] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (location.state?.openModal) {
+      setModalOpen(true);
+      
+      navigate(location.pathname, { replace: true });
+    }
+
     const fetchCategorias = async () => {
       try {
         const res = await api.get('/categorias');
@@ -54,7 +63,7 @@ const LoanManagement = () => {
         .then(res => setUsuarios(res.data))
         .catch(() => setMessage({ type: 'error', text: 'Error al cargar usuarios' }));
     }
-  }, [modalOpen]);
+  }, [modalOpen, location.state, navigate]);
 
   const formatDate = (date) => (date ? dayjs(date).format('YYYY-MM-DD') : null);
 
@@ -107,7 +116,7 @@ const LoanManagement = () => {
       setModalOpen(false);
       setFormData({ idLibro: '', idUsuario: '' });
       setMessage({ type: 'success', text: '✅ Préstamo creado correctamente' });
-      handleSearch(); // Refrescar la tabla
+      handleSearch(); 
     } catch (err) {
       const msg = err.response?.data || '❌ Error al crear el préstamo';
       setMessage({ type: 'error', text: msg });
@@ -240,7 +249,6 @@ const LoanManagement = () => {
         </form>
       </Paper>
 
-      {/* Tabla de resultados */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -260,7 +268,7 @@ const LoanManagement = () => {
                 sx={{
                   backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9f9f9',
                   '&:hover': {
-                    backgroundColor: '#e3f2fd', // un azul claro al hacer hover
+                    backgroundColor: '#e3f2fd', 
                   }
                 }}
               >

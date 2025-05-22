@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
-    // Métodos adicionales si es necesario
     
     long countByEstado(EstadoPrestamo estado);
 

@@ -1,30 +1,40 @@
 import React from 'react';
 import { Navbar, Nav, Container, Row, Col, Button } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router-dom';
-import { FaHome, FaBook, FaSearch, FaHandsHelping, FaSignOutAlt, FaPlusCircle } from 'react-icons/fa';  // Puedes usar iconos con react-icons
+import { FaHome, FaBook, FaSearch, FaHandsHelping, FaSignOutAlt, FaPlusCircle } from 'react-icons/fa';
 
 const AuthenticatedLayout = () => {
+  const userRole = localStorage.getItem('rol');
+  const userName = localStorage.getItem('userName');
+
   return (
     <>
-      {/* Navbar superior */}
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar style={{ background: 'linear-gradient(to right, #2c3e50, #4ca1af)' }} variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/">Biblioteca</Navbar.Brand>
-          <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/login" onClick={() => {
+          <Navbar.Brand as={Link} to="/">
+            BookLoanManager
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+            <Navbar.Text className="text-white me-3">
+              👤 {userName}
+            </Navbar.Text>
+            <Nav>
+              <Nav.Link as={Link} to="/login" onClick={() => {
                 localStorage.removeItem('token');
+                localStorage.removeItem('rol');
+                localStorage.removeItem('user');
                 window.location.href = '/login';
               }}>
-              <FaSignOutAlt /> Cerrar sesión
-            </Nav.Link>
-          </Nav>
+                <FaSignOutAlt /> Cerrar sesión
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      {/* Layout principal con Sidebar y contenido */}
       <Container fluid>
         <Row>
-          {/* Sidebar */}
           <Col xs={2} className="bg-dark text-white p-4" style={{ minHeight: '100vh' }}>
             <h5>Panel de control</h5>
             <Nav className="flex-column">
@@ -44,10 +54,15 @@ const AuthenticatedLayout = () => {
                 <FaBook /> Registrar Devolución
               </Nav.Link>
 
+              {/* SOLO PARA ADMIN */}
+              {userRole === 'ADMIN' && (
+                <Nav.Link as={Link} to="/usuarios" className="text-white">
+                  <FaPlusCircle /> Gestión de Usuarios
+                </Nav.Link>
+              )}
             </Nav>
           </Col>
 
-          {/* Contenido principal */}
           <Col xs={10} className="p-4">
             <Outlet />
           </Col>

@@ -29,13 +29,13 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-    // Método para cancelar una reserva (simulando la cancelación)
+    // Método para cancelar una reserva
     public boolean cancelReserva(Integer id) {
         Optional<Reserva> reservaOptional = reservaRepository.findById(id);
         if (reservaOptional.isPresent()) {
             Reserva reserva = reservaOptional.get();
             reserva.setEstado("Cancelada");
-            reservaRepository.save(reserva);  // Actualizamos el estado
+            reservaRepository.save(reserva);
             return true;
         }
         return false;

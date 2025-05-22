@@ -1,8 +1,11 @@
 package com.example.bookloanspring.controller;
 
 import com.example.bookloanspring.model.LoginRequest;
+import com.example.bookloanspring.model.LoginResponse;
 import com.example.bookloanspring.model.Usuario;
 import com.example.bookloanspring.service.UsuarioService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:3000") // Permite solicitudes CORS desde tu frontend
+@CrossOrigin(origins = "http://localhost:3000") 
 public class UsuarioController {
 
     @Autowired
@@ -42,12 +45,19 @@ public class UsuarioController {
                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Si no existe, devuelve NOT FOUND
     }
 
-    // Actualizar un usuario
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> actualizarUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(usuario);
+            System.out.println("Usuario recibido (JSON): " + json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Optional<Usuario> usuarioActualizado = usuarioService.actualizarUsuario(id, usuario);
-        return usuarioActualizado.map(u -> new ResponseEntity<>(u, HttpStatus.OK)) // Si el usuario fue actualizado, devuelve OK
-                                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Si no se encuentra el usuario, devuelve NOT FOUND
+        return usuarioActualizado.map(u -> new ResponseEntity<>(u, HttpStatus.OK))
+                                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // Eliminar un usuario
@@ -59,11 +69,27 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody LoginRequest loginRequest) {
-        boolean existe = usuarioService
-            .validarLogin(loginRequest.getEmail(), loginRequest.getContrasena())
-            .isPresent();
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        Optional<Usuario> usuarioOpt = usuarioService.validarLogin(loginRequest.getEmail(), loginRequest.getContrasena());
 
-        return ResponseEntity.ok(existe);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+
+            // En producción se usará un token JWT o similar
+            String token = "fake-token";
+
+            // Crear el objeto de respuesta
+            LoginResponse response = new LoginResponse(
+                usuario.getEmail(),
+                usuario.getNombre(),
+                usuario.getRol(),
+                token
+            );
+
+            return ResponseEntity.ok(response);
+        } else {
+            // Credenciales inválidas
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo o contraseña inválidos");
+        }
     }
 }

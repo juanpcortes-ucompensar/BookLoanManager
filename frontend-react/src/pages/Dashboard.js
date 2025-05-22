@@ -1,45 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Asegúrate de importar Axios
-import { Grid, Paper, Typography, Button, Box, List, ListItem, ListItemText, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
-import { Link } from 'react-router-dom'; // Asegúrate de importar esto
-import api from '../services/api'; // Axios configurado
+import { Grid, Paper, Typography, Button, Box, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Link } from 'react-router-dom'; 
+import api from '../services/api'; 
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  // Estado para almacenar los datos obtenidos
+  
   const [resumen, setResumen] = useState([]);
   const [vencimientos, setVencimientos] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const [error, setError] = useState(''); // Para manejar errores
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(''); 
+  const navigate = useNavigate();
 
-  // Realizamos las consultas a las APIs al montar el componente
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener el resumen (puedes reemplazar la URL con la que tengas configurada en tu backend)
+        
         const resumenResponse = await api.get('/dashboard/resumen');
         setResumen(resumenResponse.data);
 
-        // Obtener los vencimientos
+        
         const vencimientosResponse = await api.get('/dashboard/vencimientos');
         setVencimientos(vencimientosResponse.data);
 
-        setLoading(false); // Cambiar el estado de carga
+        setLoading(false); 
       } catch (err) {
         console.error(err);
         setError('Error al obtener los datos');
-        setLoading(false); // Cambiar el estado de carga en caso de error
+        setLoading(false); 
       }
     };
 
-    fetchData(); // Ejecutar la función para obtener los datos
-  }, []); // Se ejecuta solo al montar el componente
+    fetchData(); 
+  }, []); 
 
-  // Mostrar "Loading..." mientras los datos se cargan
+  const handleClick = () => {
+    navigate('/loan-management', { state: { openModal: true } });
+  };
+
+  
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Mostrar el error si hubo un problema
+  
   if (error) {
     return <div>{error}</div>;
   }
@@ -70,12 +75,11 @@ const Dashboard = () => {
         <Grid container spacing={2}>
           <Grid item>
             <Button
-                variant="contained"
-                color="primary"
-                component={Link}
-                to="/nuevo-prestamo"
+              variant="contained"
+              color="primary"
+              onClick={handleClick}
             >
-                ➕ Nuevo préstamo
+              ➕ Nuevo préstamo
             </Button>
           </Grid>
           <Grid item>

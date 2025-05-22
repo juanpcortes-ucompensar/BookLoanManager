@@ -14,7 +14,7 @@ public class Categoria {
     private String nombre;
 
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore // Ignorar la lista de libros al serializar
+    @JsonIgnore
     private List<Libro> libros;
 
     // Getters y Setters
@@ -40,23 +40,6 @@ public class Categoria {
 
     public void setLibros(List<Libro> libros) {
         this.libros = libros;
-    }
-
-    // Métodos específicos
-    public void agregarCategoria() {
-        // Lógica para agregar una nueva categoría
-    }
-
-    public void eliminarCategoria() {
-        // Lógica para eliminar una categoría
-    }
-
-    public void actualizarCategoria() {
-        // Lógica para actualizar una categoría
-    }
-
-    public void consultarCategoria() {
-        // Lógica para consultar una categoría
     }
 
     public List<Libro> listarLibrosPorCategoria() {

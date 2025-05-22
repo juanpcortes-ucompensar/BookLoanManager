@@ -1,31 +1,30 @@
-// src/pages/CheckAvailability.js
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Container, Form, Button, Table, Alert } from 'react-bootstrap';
 
 const CheckAvailability = () => {
-  const [categories, setCategories] = useState([]); // Estado para las categorías
-  const [category, setCategory] = useState(''); // Estado para la categoría seleccionada
-  const [books, setBooks] = useState([]); // Estado para los libros obtenidos
-  const [message, setMessage] = useState(null); // Estado para los mensajes de error o éxito
+  const [categories, setCategories] = useState([]); 
+  const [category, setCategory] = useState(''); 
+  const [books, setBooks] = useState([]); 
+  const [message, setMessage] = useState(null); 
 
-  // Efecto para obtener las categorías desde la base de datos
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/categorias'); // Llamada a la API para obtener las categorías
-        setCategories(response.data); // Actualizamos el estado de categorías
+        const response = await api.get('/categorias'); 
+        setCategories(response.data); 
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
         setMessage({ type: 'danger', text: 'Error al cargar las categorías' });
       }
     };
     
-    fetchCategories(); // Llamar a la función para cargar las categorías al montar el componente
-  }, []); // El efecto solo se ejecuta una vez al montar el componente
+    fetchCategories(); 
+  }, []); 
 
   const handleChange = (e) => {
-    setCategory(e.target.value); // Actualizamos la categoría seleccionada
+    setCategory(e.target.value); 
   };
 
   const handleSubmit = async (e) => {
@@ -34,7 +33,7 @@ const CheckAvailability = () => {
       const response = await api.get('/libros/categoria', {
         params: category ? { idCategoria: category } : {}
       });
-      setBooks(response.data); // Guardamos los libros obtenidos en el estado
+      setBooks(response.data);
       if (response.data.length === 0) {
         setMessage({ type: 'warning', text: 'No se encontraron libros en esta categoría.' });
       }
@@ -59,7 +58,7 @@ const CheckAvailability = () => {
             value={category}
             onChange={handleChange}
           >
-            <option value="">Todas</option> {/* Esta representa "null" */}
+            <option value="">Todas</option>
             {Array.isArray(categories) && categories.map((categoria) => (
               <option key={categoria.idCategoria} value={categoria.idCategoria}>
                 {categoria.nombre}

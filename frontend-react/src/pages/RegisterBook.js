@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api'; // Asegúrate de que 'api' esté configurado para usar Axios
+import api from '../services/api'; 
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
 const RegisterBook = () => {
   const [book, setBook] = useState({
-    titulo: '',   // Cambiado de 'title' a 'titulo'
-    autor: '',    // Cambiado de 'author' a 'autor'
-    isbn: '',     // Este campo ya está bien
-    categoria: '',// Cambiado de 'category' a 'categoria'
+    titulo: '',   
+    autor: '',    
+    isbn: '',     
+    categoria: '',
   });
-  const [categories, setCategories] = useState([]); // Estado para almacenar las categorías
+  const [categories, setCategories] = useState([]); 
   const [message, setMessage] = useState(null);
 
-  // Efecto para obtener las categorías al montar el componente
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/categorias'); // Llama a la API para obtener categorías
-        setCategories(response.data); // Actualiza el estado con las categorías obtenidas
+        const response = await api.get('/categorias'); 
+        setCategories(response.data); 
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
         setMessage({ type: 'danger', text: 'Error al cargar las categorías' });
@@ -25,7 +25,7 @@ const RegisterBook = () => {
     };
     
     fetchCategories();
-  }, []); // Dependencias vacías para que se ejecute solo al montar el componente
+  }, []); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,22 +36,22 @@ const RegisterBook = () => {
     e.preventDefault();
     try {
       const libroData = {
-        titulo: book.titulo,   // Asegúrate de que el nombre coincida con 'titulo' en el backend
-        autor: book.autor,     // Asegúrate de que el nombre coincida con 'autor' en el backend
-        isbn: book.isbn,       // Ya está correcto
-        estado: "Disponible",   // Siempre asignamos "Disponible"
+        titulo: book.titulo,   
+        autor: book.autor,     
+        isbn: book.isbn,       
+        estado: "Disponible",   
         categoria: {
-          idCategoria: book.categoria // Enviar el ID de la categoría seleccionada
+          idCategoria: book.categoria 
         }
       };
       console.log('Datos del libro:', libroData);
       await api.post('/libros', libroData);
       setMessage({ type: 'success', text: 'Libro registrado con éxito' });
       setBook({
-        titulo: '',    // Reiniciar 'titulo'
-        autor: '',     // Reiniciar 'autor'
-        isbn: '',      // Reiniciar 'isbn'
-        categoria: '', // Reiniciar 'categoria'
+        titulo: '',    
+        autor: '',     
+        isbn: '',      
+        categoria: '', 
       });
     } catch (error) {
       setMessage({ type: 'danger', text: 'Error al registrar el libro' });
@@ -71,7 +71,7 @@ const RegisterBook = () => {
           <Form.Label>Título</Form.Label>
           <Form.Control
             type="text"
-            name="titulo"  // Cambiado de 'title' a 'titulo'
+            name="titulo"  
             value={book.titulo}
             onChange={handleChange}
             required
@@ -82,7 +82,7 @@ const RegisterBook = () => {
           <Form.Label>Autor</Form.Label>
           <Form.Control
             type="text"
-            name="autor"  // Cambiado de 'author' a 'autor'
+            name="autor"  
             value={book.autor}
             onChange={handleChange}
             required
@@ -93,7 +93,7 @@ const RegisterBook = () => {
           <Form.Label>ISBN</Form.Label>
           <Form.Control
             type="text"
-            name="isbn"   // Este campo ya está bien
+            name="isbn"   
             value={book.isbn}
             onChange={handleChange}
             required
@@ -104,7 +104,7 @@ const RegisterBook = () => {
           <Form.Label>Categoría</Form.Label>
           <Form.Control
             as="select"
-            name="categoria"  // Cambiado de 'category' a 'categoria'
+            name="categoria"
             value={book.categoria}
             onChange={handleChange}
             required
@@ -112,7 +112,7 @@ const RegisterBook = () => {
             <option value="">Selecciona una categoría</option>
             {Array.isArray(categories) && categories.map((categoria) => (
               <option key={categoria.idCategoria} value={categoria.idCategoria}>
-                {categoria.nombre} {/* Asegúrate de que el nombre de la propiedad coincida */}
+                {categoria.nombre}
               </option>
             ))}
           </Form.Control>

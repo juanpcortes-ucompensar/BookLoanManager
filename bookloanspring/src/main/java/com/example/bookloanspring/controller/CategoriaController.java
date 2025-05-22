@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/categorias")
-@CrossOrigin(origins = "http://localhost:3000") // Permite solicitudes CORS desde tu frontend
+@CrossOrigin(origins = "http://localhost:3000")
 public class CategoriaController {
 
     @Autowired
@@ -34,7 +34,7 @@ public class CategoriaController {
 
     // Obtener una categoría por su ID
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtenerCategoria(@PathVariable Long id) {  // Cambiar de int a Long
+    public ResponseEntity<Categoria> obtenerCategoria(@PathVariable Long id) {
         Optional<Categoria> categoria = categoriaService.consultarCategoria(id);
         return categoria.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
                        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -42,7 +42,7 @@ public class CategoriaController {
 
     // Actualizar una categoría
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria categoria) {  // Cambiar de int a Long
+    public ResponseEntity<Categoria> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria categoria) {
         Optional<Categoria> categoriaActualizada = categoriaService.actualizarCategoria(id, categoria);
         return categoriaActualizada.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
                                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -50,7 +50,7 @@ public class CategoriaController {
 
     // Eliminar una categoría
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCategoria(@PathVariable Long id) {  // Cambiar de int a Long
+    public ResponseEntity<Void> eliminarCategoria(@PathVariable Long id) {
         boolean eliminado = categoriaService.eliminarCategoria(id);
         return eliminado ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                          : new ResponseEntity<>(HttpStatus.NOT_FOUND);

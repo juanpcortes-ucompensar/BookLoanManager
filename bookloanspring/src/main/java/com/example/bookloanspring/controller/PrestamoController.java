@@ -17,18 +17,16 @@ public class PrestamoController {
     @Autowired
     private PrestamoService prestamoService;
 
-    // Realizar un nuevo préstamo
     @PostMapping
-    public ResponseEntity<Prestamo> realizarPrestamo(@RequestBody Prestamo prestamo) {
-        Prestamo nuevoPrestamo = prestamoService.realizarPrestamo(prestamo);
-        return new ResponseEntity<>(nuevoPrestamo, HttpStatus.CREATED);
-    }
-
-    // Obtener todos los préstamos
-    @GetMapping
-    public ResponseEntity<List<Prestamo>> listarPrestamos() {
-        List<Prestamo> prestamos = prestamoService.listarPrestamos();
-        return new ResponseEntity<>(prestamos, HttpStatus.OK);
+    public ResponseEntity<?> realizarPrestamo(@RequestBody Prestamo request) {
+        try {
+            Prestamo nuevoPrestamo = prestamoService.realizarPrestamo(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPrestamo.getIdPrestamo());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // Obtener un préstamo por su ID
@@ -48,4 +46,11 @@ public class PrestamoController {
         return prestamoDevuelto.map(p -> new ResponseEntity<>(p, HttpStatus.OK)) // Si el libro fue devuelto, 200 OK
                                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Si no se encuentra, 404 NOT FOUND
     }
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<Prestamo>> listarPrestamosActivos() {
+        List<Prestamo> prestamos = prestamoService.listarPrestamosActivos();
+        return new ResponseEntity<>(prestamos, HttpStatus.OK);
+    }
+
 }

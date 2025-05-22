@@ -3,6 +3,8 @@ package com.example.bookloanspring.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Usuario {
 
@@ -12,11 +14,15 @@ public class Usuario {
     private String nombre;
     private String direccion;
     private String telefono;
+    private String email;
+    private String contrasena;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     private List<Prestamo> prestamos;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     private List<Reserva> reservas;
 
     // Constructor por defecto
@@ -62,6 +68,22 @@ public class Usuario {
         this.telefono = telefono;
     }
 
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public List<Prestamo> getPrestamos() {
         return prestamos;
     }
@@ -78,30 +100,5 @@ public class Usuario {
         this.reservas = reservas;
     }
 
-    // Métodos específicos
-    public void registrarUsuario() {
-        // Lógica para registrar un usuario
-    }
 
-    public void eliminarUsuario() {
-        // Lógica para eliminar un usuario
-    }
-
-    public void actualizarUsuario() {
-        // Lógica para actualizar los datos de un usuario
-    }
-
-    public void consultarUsuario() {
-        // Lógica para consultar los datos de un usuario
-    }
-
-    public List<Prestamo> listarPrestamos() {
-        // Lógica para listar los préstamos de un usuario
-        return null; // Implementar adecuadamente
-    }
-
-    public List<Reserva> listarReservas() {
-        // Lógica para listar las reservas de un usuario
-        return null; // Implementar adecuadamente
-    }
 }

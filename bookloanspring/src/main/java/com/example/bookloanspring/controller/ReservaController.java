@@ -25,7 +25,7 @@ public class ReservaController {
 
     // Método para obtener una reserva por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Reserva> getReservaById(@PathVariable Long id) {
+    public ResponseEntity<Reserva> getReservaById(@PathVariable Integer id) {
         Optional<Reserva> reserva = reservaService.getReservaById(id);
         return reserva.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.notFound().build());
@@ -40,7 +40,7 @@ public class ReservaController {
 
     // Método para cancelar una reserva
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelReserva(@PathVariable Long id) {
+    public ResponseEntity<Void> cancelReserva(@PathVariable Integer id) {
         boolean isCancelled = reservaService.cancelReserva(id);
         return isCancelled ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }

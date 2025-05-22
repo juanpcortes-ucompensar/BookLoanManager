@@ -51,4 +51,8 @@ public class UsuarioService {
         }
         return false;
     }
+
+    public Optional<Usuario> validarLogin(String email, String contrasena) {
+        return usuarioRepository.findByEmailAndContrasena(email, contrasena);
+    }
 }

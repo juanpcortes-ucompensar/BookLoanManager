@@ -16,7 +16,7 @@ const RegisterBook = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/api/categorias'); // Llama a la API para obtener categorías
+        const response = await api.get('/categorias'); // Llama a la API para obtener categorías
         setCategories(response.data); // Actualiza el estado con las categorías obtenidas
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
@@ -45,7 +45,7 @@ const RegisterBook = () => {
         }
       };
       console.log('Datos del libro:', libroData);
-      await api.post('/api/libros', libroData);
+      await api.post('/libros', libroData);
       setMessage({ type: 'success', text: 'Libro registrado con éxito' });
       setBook({
         titulo: '',    // Reiniciar 'titulo'

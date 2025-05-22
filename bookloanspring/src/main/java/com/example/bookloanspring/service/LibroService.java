@@ -1,6 +1,7 @@
 package com.example.bookloanspring.service;
 
 import com.example.bookloanspring.model.Libro;
+import com.example.bookloanspring.model.Libro.EstadoLibro;
 import com.example.bookloanspring.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +27,23 @@ public class LibroService {
 
     // Método para buscar libros con filtros
     public List<Map<String, Object>> searchLibros(String titulo, String usuarioPrestante, String autor,
-            Long categoriaId, String estado,
-            Date fechaPrestamoInicio, Date fechaPrestamoFin, Long idLibro) {
+        Long categoriaId, String estadoStr  ,
+        Date fechaPrestamoInicio, Date fechaPrestamoFin, Long idLibro) {
+
+        Libro.EstadoLibro estado = null;
+        if (estadoStr != null && !estadoStr.isEmpty() && !estadoStr.equalsIgnoreCase("Todos")) {
+            estado = Libro.EstadoLibro.valueOf(estadoStr); // cuidado con casing
+        }
 
         List<Object[]> results = libroRepository.searchLibros(titulo, usuarioPrestante, autor,
-                categoriaId, estado, fechaPrestamoInicio,
-                fechaPrestamoFin, idLibro);
+                categoriaId, estado, fechaPrestamoInicio, fechaPrestamoFin, idLibro);
 
         List<Map<String, Object>> librosConInfo = new ArrayList<>();
+
         for (Object[] result : results) {
-            Libro libro = (Libro) result[0]; // Primer objeto es el libro
-            String libroEstado = libro.getEstado();
-            // Crear un mapa con la información del libro y los datos adicionales
+            Libro libro = (Libro) result[0];
+            EstadoLibro libroEstado = libro.getEstado();
+
             Map<String, Object> libroMap = new HashMap<>();
             libroMap.put("idLibro", libro.getIdLibro());
             libroMap.put("titulo", libro.getTitulo());
@@ -45,17 +51,18 @@ public class LibroService {
             libroMap.put("estado", libroEstado);
             libroMap.put("categoria", result[5]);
 
-            String usuario = libroEstado.equals("Prestado") ? (String) result[1] : (String) result[3];
-            String fecha = libroEstado.equals("Prestado") ?  (String) result[2] : (String)  result[4];
-            // Información adicional
-            libroMap.put("nombreUsuario", usuario!=null? usuario : '-');
-            libroMap.put("fechaPrestamo", fecha!=null? fecha.toString().substring(0,10) : '-');
-            
+            String nombreUsuario = (String) result[1];
+            Date fechaPrestamo = (Date) result[2];
+
+            libroMap.put("nombreUsuario", nombreUsuario != null ? nombreUsuario : "-");
+            libroMap.put("fechaPrestamo", fechaPrestamo != null ? fechaPrestamo.toString().substring(0, 10) : "-");
+
             librosConInfo.add(libroMap);
         }
 
         return librosConInfo;
     }
+
 
     // Método para obtener un libro por ID
     public Optional<Libro> getLibroById(Long id) {
@@ -69,7 +76,13 @@ public class LibroService {
 
     // Método para obtener libros por categoría
     public List<Libro> getLibrosByCategoria(Long idCategoria) {
-        return libroRepository.findByCategoriaIdCategoria(idCategoria); // Usamos una consulta personalizada
+        List<Libro> libros = null;
+        if (idCategoria == null) {
+            libros = libroRepository.findAll(); // Retorna una lista vacía si no se proporciona un ID de categoría
+        } else {
+            libros = libroRepository.findByCategoriaIdCategoria(idCategoria); // Retorna una lista vacía si no se proporciona un ID de categoría
+        }
+        return libros; // Usamos una consulta personalizada
     }
 
 }

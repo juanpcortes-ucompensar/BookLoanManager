@@ -13,7 +13,7 @@ const CheckAvailability = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/api/categorias'); // Llamada a la API para obtener las categorías
+        const response = await api.get('/categorias'); // Llamada a la API para obtener las categorías
         setCategories(response.data); // Actualizamos el estado de categorías
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
@@ -31,13 +31,15 @@ const CheckAvailability = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.get(`/api/libros/categoria/${category}`); // Llamada a la API para obtener libros por categoría
+      const response = await api.get('/libros/categoria', {
+        params: category ? { idCategoria: category } : {}
+      });
       setBooks(response.data); // Guardamos los libros obtenidos en el estado
       if (response.data.length === 0) {
         setMessage({ type: 'warning', text: 'No se encontraron libros en esta categoría.' });
       }
     } catch (error) {
-      setMessage({ type: 'danger', text: 'Error al obtener los libros' });
+      console.error('Error al cargar libros', error);
     }
   };
 
@@ -56,9 +58,8 @@ const CheckAvailability = () => {
             as="select"
             value={category}
             onChange={handleChange}
-            required
           >
-            <option value="">Selecciona una categoría</option>
+            <option value="">Todas</option> {/* Esta representa "null" */}
             {Array.isArray(categories) && categories.map((categoria) => (
               <option key={categoria.idCategoria} value={categoria.idCategoria}>
                 {categoria.nombre}

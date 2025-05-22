@@ -1,6 +1,8 @@
 package com.example.bookloanspring.repository;
 
 import com.example.bookloanspring.model.Libro;
+import com.example.bookloanspring.model.Libro.EstadoLibro;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,25 +16,17 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     List<Libro> findByCategoriaIdCategoria(Long idCategoria);
 
     // Búsqueda dinámica de libros con filtros
-    @Query("SELECT l, " + 
-       "       CASE WHEN (:estado = 'Prestado') " + 
-       "            THEN up.nombre " +  // Si hay un préstamo activo, obtenemos el nombre del usuario
-       "            ELSE '-' END, " + // Si no hay préstamo activo, devolvemos '-'
-       "       CASE WHEN (:estado = 'Prestado') " +
-       "            THEN p.fechaPrestamo " + // Si hay un préstamo activo, obtenemos la fecha de préstamo
-       "            ELSE NULL END, " +  // Si no hay préstamo activo, devolvemos NULL
-       "       CASE WHEN (:estado = 'Reservado') " + 
-       "            THEN ur.nombre " +  // Si hay un préstamo activo, obtenemos el nombre del usuario
-       "            ELSE '-' END, " + // Si no hay préstamo activo, devolvemos '-'
-       "       CASE WHEN (:estado = 'Reservado') " +
-       "            THEN r.fechaReserva " + // Si hay un préstamo activo, obtenemos la fecha de préstamo
-       "            ELSE NULL END, " +  // Si no hay préstamo activo, devolvemos NULL
-       "       c.nombre " + // Nombre de la categoría
+    @Query("SELECT l, " +
+       "       CASE WHEN l.estado = 'Prestado' THEN up.nombre ELSE '-' END, " +
+       "       CASE WHEN l.estado = 'Prestado' THEN p.fechaPrestamo ELSE NULL END, " +
+       "       CASE WHEN l.estado = 'Reservado' THEN ur.nombre ELSE '-' END, " +
+       "       CASE WHEN l.estado = 'Reservado' THEN r.fechaReserva ELSE NULL END, " +
+       "       c.nombre " +
        "FROM Libro l " +
-       "LEFT JOIN l.prestamos p " + 
-       "LEFT JOIN p.usuario up " + 
-       "LEFT JOIN l.reservas r " + 
-       "LEFT JOIN r.usuario ur " + 
+       "LEFT JOIN l.prestamos p ON p.estado = 'Activo' " +
+       "LEFT JOIN p.usuario up " +
+       "LEFT JOIN l.reservas r ON r.estado = 'Activa' " +
+       "LEFT JOIN r.usuario ur " +
        "LEFT JOIN l.categoria c " +
        "WHERE (:titulo IS NULL OR LOWER(l.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))) " +
        "AND (:usuarioPrestante IS NULL OR LOWER(up.nombre) LIKE LOWER(CONCAT('%', :usuarioPrestante, '%'))) " +
@@ -41,19 +35,21 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
        "AND (:estado IS NULL OR l.estado = :estado) " +
        "AND (:fechaPrestamoInicio IS NULL OR p.fechaPrestamo >= :fechaPrestamoInicio) " +
        "AND (:fechaPrestamoFin IS NULL OR p.fechaPrestamo <= :fechaPrestamoFin) " +
-       "AND (:idLibro IS NULL OR l.idLibro = :idLibro) ")
-List<Object[]> searchLibros(
-        @Param("titulo") String titulo,
-        @Param("usuarioPrestante") String usuarioPrestante,
-        @Param("autor") String autor,
-        @Param("categoriaId") Long categoriaId,
-        @Param("estado") String estado,
-        @Param("fechaPrestamoInicio") Date fechaPrestamoInicio,
-        @Param("fechaPrestamoFin") Date fechaPrestamoFin,
-        @Param("idLibro") Long idLibro
-);
+       "AND (:idLibro IS NULL OR l.idLibro = :idLibro)")
+    List<Object[]> searchLibros(
+            @Param("titulo") String titulo,
+            @Param("usuarioPrestante") String usuarioPrestante,
+            @Param("autor") String autor,
+            @Param("categoriaId") Long categoriaId,
+            @Param("estado") EstadoLibro estado,
+            @Param("fechaPrestamoInicio") Date fechaPrestamoInicio,
+            @Param("fechaPrestamoFin") Date fechaPrestamoFin,
+            @Param("idLibro") Long idLibro
+    );
 
 
+
+    long countByEstado(EstadoLibro estado);
 
 
 }

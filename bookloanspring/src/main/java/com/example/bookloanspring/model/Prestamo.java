@@ -2,17 +2,24 @@ package com.example.bookloanspring.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Prestamo {
 
+    public enum EstadoPrestamo {
+        Activo,
+        Devuelto
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idPrestamo;
+
     private Date fechaPrestamo;
     private Date fechaDevolucion;
-    private String estado; // activo, devuelto
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPrestamo estado; // Cambiado a enum
 
     @ManyToOne
     @JoinColumn(name = "idLibro")
@@ -26,7 +33,7 @@ public class Prestamo {
     public Prestamo() {}
 
     // Constructor con parámetros
-    public Prestamo(Date fechaPrestamo, Date fechaDevolucion, String estado, Libro libro, Usuario usuario) {
+    public Prestamo(Date fechaPrestamo, Date fechaDevolucion, EstadoPrestamo estado, Libro libro, Usuario usuario) {
         this.fechaPrestamo = fechaPrestamo;
         this.fechaDevolucion = fechaDevolucion;
         this.estado = estado;
@@ -59,11 +66,11 @@ public class Prestamo {
         this.fechaDevolucion = fechaDevolucion;
     }
 
-    public String getEstado() {
+    public EstadoPrestamo getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoPrestamo estado) {
         this.estado = estado;
     }
 
@@ -82,22 +89,5 @@ public class Prestamo {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
-    // Métodos específicos
-    public void realizarPrestamo() {
-        // Lógica para realizar un préstamo
-    }
-
-    public void devolverLibro() {
-        // Lógica para devolver un libro
-    }
-
-    public void consultarPrestamo() {
-        // Lógica para consultar los detalles de un préstamo
-    }
-
-    public List<Prestamo> listarPrestamosActivos() {
-        // Lógica para listar los préstamos activos
-        return null; // Implementar adecuadamente
-    }
 }
+

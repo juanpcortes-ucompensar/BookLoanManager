@@ -14,18 +14,20 @@ public class Libro {
     private String titulo;
     private String autor;
     private String isbn;
-    private String estado; // Disponible, prestado, reservado
+    
+    @Enumerated(EnumType.STRING)
+    private EstadoLibro estado;
 
     @ManyToOne
     @JoinColumn(name = "idCategoria")
     private Categoria categoria;
 
     @OneToMany(mappedBy = "libro")
-    @JsonIgnore // Ignorar la lista de prestamos al serializar
+    @JsonIgnore
     private List<Prestamo> prestamos;
 
     @OneToMany(mappedBy = "libro")
-    @JsonIgnore // Ignorar la lista de reservas al serializar
+    @JsonIgnore
     private List<Reserva> reservas;
 
     // Getters y Setters
@@ -61,13 +63,14 @@ public class Libro {
         this.isbn = isbn;
     }
 
-    public String getEstado() {
+    public EstadoLibro getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoLibro estado) {
         this.estado = estado;
     }
+
 
     public Categoria getCategoria() {
         return categoria;
@@ -95,7 +98,14 @@ public class Libro {
 
     // Métodos específicos
     public boolean disponibilidad() {
-        return "Disponible".equals(this.estado);
+        return EstadoLibro.Disponible.equals(this.estado);
+    }
+
+
+    public enum EstadoLibro {
+        Disponible,
+        Prestado,
+        Reservado
     }
 
     public void agregarLibro() {

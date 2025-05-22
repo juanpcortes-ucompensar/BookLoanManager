@@ -20,7 +20,7 @@ public class ReservaService {
     }
 
     // Método para obtener una reserva por ID
-    public Optional<Reserva> getReservaById(Long id) {
+    public Optional<Reserva> getReservaById(Integer id) {
         return reservaRepository.findById(id);
     }
 
@@ -30,7 +30,7 @@ public class ReservaService {
     }
 
     // Método para cancelar una reserva (simulando la cancelación)
-    public boolean cancelReserva(Long id) {
+    public boolean cancelReserva(Integer id) {
         Optional<Reserva> reservaOptional = reservaRepository.findById(id);
         if (reservaOptional.isPresent()) {
             Reserva reserva = reservaOptional.get();

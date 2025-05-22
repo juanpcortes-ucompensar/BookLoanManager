@@ -1,5 +1,6 @@
 package com.example.bookloanspring.controller;
 
+import com.example.bookloanspring.model.LoginRequest;
 import com.example.bookloanspring.model.Usuario;
 import com.example.bookloanspring.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class UsuarioController {
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
+    
     // Obtener todos los usuarios
     @GetMapping
     public ResponseEntity<List<Usuario>> listarUsuarios() {
@@ -54,5 +56,14 @@ public class UsuarioController {
         boolean eliminado = usuarioService.eliminarUsuario(id);
         return eliminado ? new ResponseEntity<>(HttpStatus.NO_CONTENT) // Si se eliminó, devuelve 204 No Content
                          : new ResponseEntity<>(HttpStatus.NOT_FOUND); // Si no se encuentra el usuario, devuelve 404 Not Found
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Boolean> login(@RequestBody LoginRequest loginRequest) {
+        boolean existe = usuarioService
+            .validarLogin(loginRequest.getEmail(), loginRequest.getContrasena())
+            .isPresent();
+
+        return ResponseEntity.ok(existe);
     }
 }

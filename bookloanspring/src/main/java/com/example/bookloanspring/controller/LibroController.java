@@ -3,6 +3,7 @@ package com.example.bookloanspring.controller;
 import com.example.bookloanspring.model.Libro;
 import com.example.bookloanspring.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +35,10 @@ public class LibroController {
             @RequestParam(required = false) String autor,
             @RequestParam(required = false) Long categoriaId,
             @RequestParam(required = false) String estado,
-            @RequestParam(required = false) Date fechaPrestamoInicio,
-            @RequestParam(required = false) Date fechaPrestamoFin,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaPrestamoInicio,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaPrestamoFin,
             @RequestParam(required = false) Long idLibro) {
 
         // Busca los libros con los filtros aplicados
@@ -60,8 +63,8 @@ public class LibroController {
     }
 
     // Nuevo método para obtener libros por categoría
-    @GetMapping("/categoria/{idCategoria}")
-    public ResponseEntity<List<Libro>> getLibrosByCategoria(@PathVariable Long idCategoria) {
+    @GetMapping("/categoria")
+    public ResponseEntity<List<Libro>> getLibrosByCategoria(@RequestParam(required = false) Long idCategoria) {
         List<Libro> libros = libroService.getLibrosByCategoria(idCategoria); // Filtra libros por categoría
         return libros.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(libros);
     }

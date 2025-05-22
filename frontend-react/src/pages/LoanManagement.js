@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box, Typography, Grid, Paper, FormControl, InputLabel, Select,
+  MenuItem, TextField, Button, Collapse, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Snackbar, Alert, Dialog,
+  DialogTitle, DialogContent, DialogActions,
+} from '@mui/material';
 import api from '../services/api';
-import { Container, Form, Button, Alert, Table, Row, Col, Collapse } from 'react-bootstrap';
+import dayjs from 'dayjs';
 
 const LoanManagement = () => {
-  // Estado de los filtros
+  // Estados de filtros
   const [titulo, setTitulo] = useState('');
   const [usuarioPrestante, setUsuarioPrestante] = useState('');
   const [autor, setAutor] = useState('');
@@ -12,237 +18,322 @@ const LoanManagement = () => {
   const [fechaPrestamoInicio, setFechaPrestamoInicio] = useState('');
   const [fechaPrestamoFin, setFechaPrestamoFin] = useState('');
   const [idLibro, setIdLibro] = useState('');
+  const [open, setOpen] = useState(false);
 
-  // Estado para los resultados de la búsqueda
+  // Datos de libros y categorías
   const [libros, setLibros] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+
+  // Carga y feedback
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // Estado para controlar la visibilidad de los filtros avanzados
-  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ idLibro: '', idUsuario: '' });
+  const [librosDisponibles, setLibrosDisponibles] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
 
-  // Estado para las categorías
-  const [categorias, setCategorias] = useState([]);
-
-  // Cargar las categorías desde la API
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await api.get('/api/categorias'); // Asegúrate de que la API para obtener las categorías esté configurada correctamente
-        setCategorias(response.data); // Actualizamos el estado con las categorías obtenidas
-      } catch (error) {
-        setMessage({ type: 'danger', text: 'Error al cargar las categorías.' });
+        const res = await api.get('/categorias');
+        setCategorias(res.data);
+      } catch (err) {
+        setMessage({ type: 'error', text: 'Error al cargar categorías' });
       }
     };
 
     fetchCategorias();
-  }, []);
 
-  // Función para manejar la búsqueda de libros
+    if (modalOpen) {
+      api.get('/libros')
+        .then(res => setLibrosDisponibles(res.data))
+        .catch(() => setMessage({ type: 'error', text: 'Error al cargar libros' }));
+
+      api.get('/usuarios')
+        .then(res => setUsuarios(res.data))
+        .catch(() => setMessage({ type: 'error', text: 'Error al cargar usuarios' }));
+    }
+  }, [modalOpen]);
+
+  const formatDate = (date) => (date ? dayjs(date).format('YYYY-MM-DD') : null);
+
   const handleSearch = async (e) => {
-    e.preventDefault();
+    
+    if (e?.preventDefault) e.preventDefault();
     setLoading(true);
     setMessage(null);
-// Convert dates to 'YYYY-MM-DD' if they're not null
-const formatDate = (date) => (date ? new Date(date).toISOString().split('T')[0] : null);
 
-try {
-  // Make the request with the current filters
-  const response = await api.get('/api/libros/search', {
-    params: {
-      titulo: titulo || null,
-      usuarioPrestante: usuarioPrestante || null,
-      autor: autor || null,
-      categoriaId: categoriaId || null,
-      estado: estado || null,
-      fechaPrestamoInicio: formatDate(fechaPrestamoInicio),
-      fechaPrestamoFin: formatDate(fechaPrestamoFin),
-      idLibro: idLibro || null,
-    },
-  });
-  console.log(response.data);
+    try {
+      const res = await api.get('/libros/search', {
+        params: {
+          titulo: titulo || null,
+          usuarioPrestante: usuarioPrestante || null,
+          autor: autor || null,
+          categoriaId: categoriaId || null,
+          estado: estado || null,
+          fechaPrestamoInicio: formatDate(fechaPrestamoInicio),
+          fechaPrestamoFin: formatDate(fechaPrestamoFin),
+          idLibro: idLibro || null,
+        }
+      });
+      setLibros(res.data);
+    } catch (err) {
+      setMessage({ type: 'error', text: '❌ Error al buscar los libros' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Update the state with the received data
-    setLibros(response.data);
-  } catch (error) {
-    setMessage({ type: 'danger', text: 'Error al buscar los libros. Intente de nuevo.' });
-  } finally {
-    setLoading(false);
-  }
+  const handleCreateLoan = async () => {
+    const hoy = new Date();
+    const devolucion = new Date(hoy.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const payload = {
+      fechaPrestamo: hoy.toISOString().slice(0, 10),
+      fechaDevolucion: devolucion.toISOString().slice(0, 10),
+      estado: 'Activo',
+      libro: { idLibro: formData.idLibro },
+      usuario: { idUsuario: formData.idUsuario }
+    };
+
+    if (!formData.idLibro || !formData.idUsuario) {
+      setMessage({ type: 'error', text: 'Debe seleccionar un libro y un usuario.' });
+      return;
+    }
+
+    try {
+      await api.post('/prestamos', payload);
+      setModalOpen(false);
+      setFormData({ idLibro: '', idUsuario: '' });
+      setMessage({ type: 'success', text: '✅ Préstamo creado correctamente' });
+      handleSearch(); // Refrescar la tabla
+    } catch (err) {
+      const msg = err.response?.data || '❌ Error al crear el préstamo';
+      setMessage({ type: 'error', text: msg });
+    }
   };
 
   return (
-    <Container className="mt-5">
-      <h2>Gestión de Préstamos</h2>
+    <Box p={3}>
+      <Typography variant="h5" gutterBottom>📚 Consulta de Préstamos</Typography>
 
-      {/* Mostrar mensaje de error o éxito */}
-      {message && (
-        <Alert variant={message.type}>
-          {message.text}
-        </Alert>
-      )}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <form onSubmit={handleSearch}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Título"
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+                fullWidth
+              />
+            </Grid>
 
-      {/* Filtros de búsqueda */}
-      <Form onSubmit={handleSearch}>
-        {/* Filtros Básicos */}
-        <Row className="mb-3">
-          <Col md={6}>
-            <Form.Label>Título</Form.Label>
-            <Form.Control
-              type="text"
-              name="titulo"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              placeholder="Buscar por título"
-            />
-          </Col>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Usuario Prestante"
+                value={usuarioPrestante}
+                onChange={(e) => setUsuarioPrestante(e.target.value)}
+                fullWidth
+              />
+            </Grid>
 
-          <Col md={6}>
-            <Form.Label>Usuario Prestante</Form.Label>
-            <Form.Control
-              type="text"
-              name="usuarioPrestante"
-              value={usuarioPrestante}
-              onChange={(e) => setUsuarioPrestante(e.target.value)}
-              placeholder="Buscar por usuario"
-            />
-          </Col>
-        </Row>
+            <Grid item xs={12}>
+              <Button onClick={() => setOpen(!open)}>
+                {open ? 'Ocultar filtros avanzados' : 'Mostrar filtros avanzados'}
+              </Button>
+            </Grid>
 
-        {/* Filtro avanzado (Categoría, Estado, Autor, Fecha de préstamo, Id Libro) */}
-        <Button
-          variant="link"
-          onClick={() => setOpen(!open)}
-          aria-controls="advanced-filters"
-          aria-expanded={open}
-        >
-          {open ? 'Ocultar filtros avanzados' : 'Mostrar filtros avanzados'}
-        </Button>
+            <Grid item xs={12}>
+              <Collapse in={open}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6} sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>Categoría</InputLabel>
+                      <Select
+                        value={categoriaId}
+                        onChange={(e) => setCategoriaId(e.target.value)}
+                        label="Categoría"
+                      >
+                        <MenuItem value="">Todas</MenuItem>
+                        {categorias.map((cat) => (
+                          <MenuItem key={cat.idCategoria} value={cat.idCategoria}>
+                            {cat.nombre}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-        <Collapse in={open}>
-          <div id="advanced-filters">
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Label>Categoría</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="categoriaId"
-                  value={categoriaId}
-                  onChange={(e) => setCategoriaId(e.target.value)}
-                >
-                  <option value="">Seleccionar categoría</option>
-                  {categorias.map((categoria) => (
-                    <option key={categoria.idCategoria} value={categoria.idCategoria}>
-                      {categoria.nombre}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Col>
+                  <Grid item xs={12} sm={6} sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                      <InputLabel id="estado-label">Estado</InputLabel>
+                      <Select
+                        labelId="estado-label"
+                        id="estado-select"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                        label="Estado"
+                      >
+                        <MenuItem value="">Todos</MenuItem>
+                        <MenuItem value="Disponible">Disponible</MenuItem>
+                        <MenuItem value="Prestado">Prestado</MenuItem>
+                        <MenuItem value="Reservado">Reservado</MenuItem>
+                      </Select>
+                    </FormControl>
 
-              <Col md={6}>
-                <Form.Label>Estado</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="estado"
-                  value={estado}
-                  onChange={(e) => setEstado(e.target.value)}
-                >
-                  <option value="">Seleccionar estado</option>
-                  <option value="Disponible">Disponible</option>
-                  <option value="Prestado">Prestado</option>
-                  <option value="Reservado">Reservado</option>
-                </Form.Control>
-              </Col>
-            </Row>
+                  </Grid>
 
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Label>Autor</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="autor"
-                  value={autor}
-                  onChange={(e) => setAutor(e.target.value)}
-                  placeholder="Buscar por autor"
-                />
-              </Col>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Autor"
+                      value={autor}
+                      onChange={(e) => setAutor(e.target.value)}
+                      fullWidth
+                    />
+                  </Grid>
 
-              <Col md={6}>
-                <Form.Label>Id Libro</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="idLibro"
-                  value={idLibro}
-                  onChange={(e) => setIdLibro(e.target.value)}
-                  placeholder="Buscar por ID del libro"
-                />
-              </Col>
-            </Row>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="ID Libro"
+                      value={idLibro}
+                      onChange={(e) => setIdLibro(e.target.value)}
+                      fullWidth
+                    />
+                  </Grid>
 
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Label>Fecha de Préstamo</Form.Label>
-                <Row>
-                  <Col md={6}>
-                    <Form.Control
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Fecha Desde"
                       type="date"
-                      name="fechaPrestamoInicio"
                       value={fechaPrestamoInicio}
                       onChange={(e) => setFechaPrestamoInicio(e.target.value)}
-                      placeholder="Desde"
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
                     />
-                  </Col>
-                  <Col md={6}>
-                    <Form.Control
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Fecha Hasta"
                       type="date"
-                      name="fechaPrestamoFin"
                       value={fechaPrestamoFin}
                       onChange={(e) => setFechaPrestamoFin(e.target.value)}
-                      placeholder="Hasta"
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
                     />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </div>
-        </Collapse>
+                  </Grid>
+                </Grid>
+              </Collapse>
+            </Grid>
 
-        {/* Botón para ejecutar la búsqueda */}
-        <Button type="submit" variant="primary">
-          Buscar
-        </Button>
-      </Form>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <Button variant="contained" type="submit">
+                Buscar
+              </Button>
+              <Button variant="contained" color="primary" onClick={() => setModalOpen(true)}>
+                Nuevo Préstamo
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Paper>
 
-      {/* Mostrar los resultados */}
-      {loading ? (
-        <div>Cargando...</div>
-      ) : (
-        <Table striped bordered hover className="mt-3">
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Autor</th>
-              <th>Categoría</th>
-              <th>Estado</th>
-              <th>Usuario Estado</th>
-              <th>Fecha Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {libros.map((libro, index) => (
-              <tr key={index}>
-                <td>{libro.titulo}</td>
-                <td>{libro.autor}</td>
-                <td>{libro.categoria}</td>
-                <td>{libro.estado}</td>
-                <td>{libro.nombreUsuario}</td>
-                <td>{libro.fechaPrestamo}</td>
-              </tr>
+      {/* Tabla de resultados */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableCell><strong>Título</strong></TableCell>
+              <TableCell><strong>Autor</strong></TableCell>
+              <TableCell><strong>Categoría</strong></TableCell>
+              <TableCell><strong>Estado</strong></TableCell>
+              <TableCell><strong>Usuario Estado</strong></TableCell>
+              <TableCell><strong>Fecha Estado</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {libros.map((libro, idx) => (
+              <TableRow
+                key={idx}
+                sx={{
+                  backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9f9f9',
+                  '&:hover': {
+                    backgroundColor: '#e3f2fd', // un azul claro al hacer hover
+                  }
+                }}
+              >
+                <TableCell>{libro.titulo}</TableCell>
+                <TableCell>{libro.autor}</TableCell>
+                <TableCell>{libro.categoria}</TableCell>
+                <TableCell>{libro.estado}</TableCell>
+                <TableCell>{libro.nombreUsuario}</TableCell>
+                <TableCell>{libro.fechaPrestamo}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
+          </TableBody>
         </Table>
-      )}
-    </Container>
+      </TableContainer>
+
+
+      <Snackbar
+        open={!!message}
+        autoHideDuration={4000}
+        onClose={() => setMessage(null)}
+      >
+        <Alert severity={message?.type} onClose={() => setMessage(null)}>
+          {message?.text}
+        </Alert>
+      </Snackbar>
+
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>📘 Crear nuevo préstamo</DialogTitle>
+        <DialogContent dividers>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="libro-select-label">Libro</InputLabel>
+            <Select
+              labelId="libro-select-label"
+              value={formData.idLibro}
+              onChange={(e) => setFormData({ ...formData, idLibro: e.target.value })}
+              label="Libro"
+              required
+            >
+              {librosDisponibles.map((libro) => (
+                <MenuItem key={libro.idLibro} value={libro.idLibro}>
+                  {libro.titulo || `Libro #${libro.idLibro}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="usuario-select-label">Usuario</InputLabel>
+            <Select
+              labelId="usuario-select-label"
+              value={formData.idUsuario}
+              onChange={(e) => setFormData({ ...formData, idUsuario: e.target.value })}
+              label="Usuario"
+              required
+            >
+              {usuarios.map((usuario) => (
+                <MenuItem key={usuario.idUsuario} value={usuario.idUsuario}>
+                  {usuario.nombre || `Usuario #${usuario.idUsuario}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setModalOpen(false)}>Cancelar</Button>
+          <Button onClick={handleCreateLoan} variant="contained" color="primary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+    </Box>
   );
 };
 

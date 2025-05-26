@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container, Row, Col, Button } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router-dom';
-import { FaHome, FaBook, FaSearch, FaHandsHelping, FaSignOutAlt, FaPlusCircle } from 'react-icons/fa';
+import { FaHome, FaBook, FaSearch, FaHandsHelping, FaSignOutAlt, FaPlusCircle, FaHistory } from 'react-icons/fa';
 
 const AuthenticatedLayout = () => {
   const userRole = localStorage.getItem('rol');
@@ -42,7 +42,7 @@ const AuthenticatedLayout = () => {
                 <FaHome /> Dashboard
               </Nav.Link>
               <Nav.Link as={Link} to="/register" className="text-white">
-                <FaBook /> Registrar Libro
+                <FaBook /> Gestion de Libros
               </Nav.Link>
               <Nav.Link as={Link} to="/check-availability" className="text-white">
                 <FaSearch /> Consultar Disponibilidad
@@ -52,6 +52,9 @@ const AuthenticatedLayout = () => {
               </Nav.Link>
               <Nav.Link as={Link} to="/devoluciones" className="text-white">
                 <FaBook /> Registrar Devolución
+              </Nav.Link>
+              <Nav.Link as={Link} to="/historico" className="text-white">
+                <FaHistory /> Historial de Préstamos
               </Nav.Link>
 
               {/* SOLO PARA ADMIN */}

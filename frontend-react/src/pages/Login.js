@@ -61,7 +61,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      setError('Error al iniciar sesión');
+        setError('Correo o contraseña inválidos');
     }
   };
 

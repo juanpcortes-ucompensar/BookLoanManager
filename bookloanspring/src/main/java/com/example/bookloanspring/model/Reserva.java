@@ -1,5 +1,4 @@
 package com.example.bookloanspring.model;
-import java.util.List;
 
 import jakarta.persistence.*;
 import java.util.Date;

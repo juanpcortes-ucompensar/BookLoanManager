@@ -2,8 +2,11 @@ package com.example.bookloanspring.controller;
 
 import com.example.bookloanspring.model.Libro;
 import com.example.bookloanspring.service.LibroService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +63,29 @@ public class LibroController {
     public ResponseEntity<Libro> createLibro(@RequestBody Libro libro) {
         Libro nuevoLibro = libroService.createLibro(libro);
         return ResponseEntity.status(201).body(nuevoLibro);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Libro> actualizarLibro(@PathVariable int id, @RequestBody Libro libro) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(libro);
+            System.out.println("Usuario recibido (JSON): " + json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Optional<Libro> libroActualizado = libroService.actualizarLibro(id, libro);
+        return libroActualizado.map(u -> new ResponseEntity<>(u, HttpStatus.OK))
+                                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // Eliminar un libro
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarLibro(@PathVariable int id) {
+        boolean eliminado = libroService.eliminarLibro(id);
+        return eliminado ? new ResponseEntity<>(HttpStatus.NO_CONTENT) // Si se eliminó, devuelve 204 No Content
+                         : new ResponseEntity<>(HttpStatus.NOT_FOUND); // Si no se encuentra el usuario, devuelve 404 Not Found
     }
 
     // Método para obtener libros por categoría

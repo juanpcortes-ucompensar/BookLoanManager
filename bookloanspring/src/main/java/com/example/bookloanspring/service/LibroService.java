@@ -85,4 +85,26 @@ public class LibroService {
         return libros; 
     }
 
+    public Optional<Libro> actualizarLibro(int id, Libro libro) {
+        Optional<Libro> libroExistente = libroRepository.findById((long) id);
+        if (libroExistente.isPresent()) {
+            Libro libroActualizado = libroExistente.get();
+            libroActualizado.setTitulo(libro.getTitulo());
+            libroActualizado.setAutor(libro.getAutor());
+            libroActualizado.setEstado(libro.getEstado());
+            libroActualizado.setCategoria(libro.getCategoria());
+            return Optional.of(libroRepository.save(libroActualizado));
+        }
+        return Optional.empty();
+    }
+
+    public boolean eliminarLibro(int id) {
+        Optional<Libro> libroExistente = libroRepository.findById((long) id);
+        if (libroExistente.isPresent()) {
+            libroRepository.delete(libroExistente.get());
+            return true;
+        }
+        return false;
+    }
+
 }

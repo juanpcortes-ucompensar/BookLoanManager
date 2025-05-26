@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import RegisterBook from './pages/RegisterBook';
+import BookManagement from './pages/BookManagement';
 import CheckAvailability from './pages/CheckAvailability';
 import LoanManagement from './pages/LoanManagement';
 import Login from './pages/Login';
@@ -9,6 +9,7 @@ import RegistrarDevolucion from './pages/RegistrarDevolucion';
 import ProtectedLayout from './components/ProtectedLayout';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import UserManagement from './pages/UserManagement';
+import LoanHistory from './pages/LoanHistory';
 import AdminRoute from './components/AdminRoute'; 
 
 const App = () => {
@@ -22,10 +23,11 @@ const App = () => {
         <Route element={<AuthenticatedLayout />}>
           <Route path="/" element={<Dashboard />} /> {/* Página por defecto */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/register" element={<RegisterBook />} />
+          <Route path="/register" element={<BookManagement />} />
           <Route path="/check-availability" element={<CheckAvailability />} />
           <Route path="/loan-management" element={<LoanManagement />} />
           <Route path="/devoluciones" element={<RegistrarDevolucion />} />
+          <Route path="/historico" element={<LoanHistory />} />
           <Route element={<AdminRoute />}>
             <Route path="/usuarios" element={<UserManagement />} />
           </Route>
